@@ -56,10 +56,10 @@ body {
 }
 
 .task {
-  background: #f4f4f4;
+  background: #ddd;
   margin: 5px;
   padding: 10px 20px;
-  cursor: pointer;
+  /* cursor: pointer; */
 }
 
 .task.reminder {
