@@ -47,11 +47,10 @@ function App() {
     )))
   }
 
-  
   return (
     <div className="container">
-        <Header onToggleAddBtn={() => setToggleAddBtn(!toggleAddBtn)} />
-
+        <Header onToggleAddBtn={() => setToggleAddBtn(!toggleAddBtn)} showAdd={toggleAddBtn} />
+        
         {toggleAddBtn && <AddTask onAdd={addTask} />}
 
         {tasks.length > 0 ? (
