@@ -36,7 +36,7 @@ const AddTask = ({ onAdd }) => {
                 <label>Day</label>
                 <input 
                     type="text" 
-                    placeholder="Eg. 15 August 1947" 
+                    placeholder="Eg. 15 August 4.30pm" 
                     value={day}
                     onChange={ e => setDay(e.target.value)}
                 />

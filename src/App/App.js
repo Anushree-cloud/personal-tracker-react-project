@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Header from '../components/Header'
 import Tasks from '../components/Tasks';
 import AddTask from '../components/AddTask';
@@ -6,37 +6,41 @@ import AddTask from '../components/AddTask';
 
 function App() {
   const [toggleAddBtn, setToggleAddBtn] = useState(false)
-  const [tasks, setTasks] = useState([
-    {
-      id: 1,
-      text: "Meet Max",
-      day: "29 July at 4.00pm",
-      reminder: true
-    },
-    {
-      id: 2,
-      text: "Meet Jane",
-      day: "30 July at 4.30pm",
-      reminder: true
-    },
-    {
-      id: 3,
-      text: "Meet Sylvie",
-      day: "31 July at 6.00pm",
-      reminder: false
-    },
-  ])
+  const [tasks, setTasks] = useState([])
+
+  //fetch data from mock api
+  const fetchTasks = async () => {
+    const response = await fetch('http://localhost:8000/tasks')
+    const data = await response.json()
+    console.log(data)
+    return data
+  }
+
+  //get tasks from mock api
+  useEffect(() => {
+    const getTasks = async () => {
+      const tasksFromServer = await fetchTasks()
+      setTasks(tasksFromServer)
+    }
+    getTasks()
+  }, [])
 
   //delete tasks
-  const deleteTask = (id) => {
+  const deleteTask = async (id) => {
+    await fetch(`http://localhost:8000/tasks/${id}`, { method: 'DELETE' })
     setTasks(tasks.filter((task) => task.id !== id ))
   }
 
   //add task
-  const addTask = (task) => {
-    console.log(task);
-    const id = Date.now()
-    const newTask = { id, ...task }
+  const addTask = async (task) => {
+    const response = await fetch('http://localhost:8000/tasks', {
+      method: 'POST',
+      headers: {
+        'Content-type': 'application/json'
+      },
+      body: JSON.stringify(task)
+    })
+    const newTask = await response.json()
     setTasks([...tasks, newTask])
   }
 
@@ -47,15 +51,14 @@ function App() {
     )))
   }
 
+
   return (
     <div className="container">
         <Header onToggleAddBtn={() => setToggleAddBtn(!toggleAddBtn)} showAdd={toggleAddBtn} />
         
-        {toggleAddBtn && <AddTask onAdd={addTask} />}
-
-        {tasks.length > 0 ? (
-          <Tasks tasks={tasks} onDelete={deleteTask} onRemind={toggleReminder} />
-        ) : "No Tasks to Show. Add some!" }
+        {
+          toggleAddBtn ? <AddTask onAdd={addTask} /> : (tasks.length > 0 ? <Tasks tasks={tasks} onDelete={deleteTask} onRemind={toggleReminder} /> : "No Tasks to Show. Add some!" )
+        }
 
     </div> 
   );
